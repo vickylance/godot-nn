@@ -1,0 +1,49 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Node",
+"class": "Activation",
+"language": "GDScript",
+"path": "res://Activation.gd"
+}, {
+"base": "Node",
+"class": "Layer",
+"language": "GDScript",
+"path": "res://Layer.gd"
+}, {
+"base": "Node",
+"class": "NeuralNetwork",
+"language": "GDScript",
+"path": "res://NeuralNetwork.gd"
+} ]
+_global_script_class_icons={
+"Activation": "",
+"Layer": "",
+"NeuralNetwork": ""
+}
+
+[application]
+
+config/name="godot-nn"
+run/main_scene="res://Test.tscn"
+config/icon="res://icon.png"
+
+[autoload]
+
+Utils="*res://Utils.gd"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "gut" )
+
+[rendering]
+
+environment/default_environment="res://default_env.tres"
