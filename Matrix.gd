@@ -54,20 +54,20 @@ static func transpose(x):
 	return result
 
 
-static func immutableMap(m, fn: FuncRef):
+static func immutableMap(m, fn: FuncRef, params={}):
 	var Matrix = load("res://Matrix.gd")
 	var result = Matrix.new(m.rows, m.cols)
 	for i in range(m.rows):
 		for j in range(m.cols):
-			result.matrix[i][j] = fn.call_func(m.matrix[i][j])
+			result.matrix[i][j] = fn.call_func(m.matrix[i][j], params)
 	return result
 
 
-func map(fn: FuncRef):
+func map(fn: FuncRef, params={}):
 	for i in range(rows):
 		for j in range(cols):
 			var val = matrix[i][j]
-			matrix[i][j] = fn.call_func(val)
+			matrix[i][j] = fn.call_func(val, params)
 	return self
 
 

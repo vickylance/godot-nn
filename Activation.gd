@@ -36,59 +36,59 @@ func _init(activation_fn) -> void:
 		}
 
 
-func sigmoid(x: float):
+func sigmoid(x: float, params={}):
 	return 1 / (1 + exp(-1 * x))
 
 
-func d_sigmoid(y: float):
+func d_sigmoid(y: float, params={}):
 	return y * (1 - y)
 
 
-func relu(x: float):
+func relu(x: float, params={}):
 	return 0.0 if x <= 0.0 else x
 
 
-func d_relu(y: float):
+func d_relu(y: float, params={}):
 	return 0.0 if y <= 0.0 else 1.0
 
 
-func leaky_relu(x: float):
+func leaky_relu(x: float, params={}):
 #	print("Val: ", (0.01 * x if x < 0.0 else x))
 	return (0.01 * x if x < 0.0 else x)
 
 
-func d_leaky_relu(y: float):
+func d_leaky_relu(y: float, params={}):
 	return (0.01 if y < 0.0 else 1.0)
 
 
-func tan_h(x: float):
+func tan_h(x: float, params={}):
 	return tanh(x)
 
 
-func d_tan_h(y: float):
+func d_tan_h(y: float, params={}):
 	return 1 - pow(tanh(y), 2)
 
 
-func arc_tan(x: float):
+func arc_tan(x: float, params={}):
 	return atan(x)
 
 
-func d_arc_tan(y: float):
+func d_arc_tan(y: float, params={}):
 	return 1 / (pow(y, 2) + 1)
 
 
-func bent_identity(x: float):
+func bent_identity(x: float, params={}):
 	return ((sqrt(pow(x, 2) + 1) - 1) / 2) + x
 
 
-func d_bent_identity(y: float):
+func d_bent_identity(y: float, params={}):
 	return (y / (2 * sqrt(pow(y, 2) + 1))) + 1
 
 
-func gaussian(x: float):
+func gaussian(x: float, params={}):
 	return exp(pow(-1 * x, 2))
 
 
-func d_gaussian(y: float):
+func d_gaussian(y: float, params={}):
 	return -2 * y * exp(pow(-1 * y, 2))
 

@@ -158,6 +158,21 @@ func clone():
 	return clone
 
 
+func mutate(mutation_rate):
+	var mutation_fn = funcref(self, "mutation_function")
+	for weight in weights:
+		weight.map(mutation_fn, {mutation_rate = mutation_rate})
+	for bias in biases:
+		bias.map(mutation_fn, {mutation_rate = mutation_rate})
+
+
+func mutation_function(val, params={}):
+	var mutation_rate = params.mutation_rate if params.mutation_rate != null else 0.05
+	randomize()
+	if(randf() < mutation_rate):
+		return Utils.map(rand_range(0, 1), 0, 1, -1, 1)
+	else:
+		return val
 
 
 
