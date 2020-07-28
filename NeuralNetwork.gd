@@ -41,7 +41,7 @@ func _init(inputNodes: int, hiddenNodes: Array, outputNodes: Layer) -> void:
 	setLearningRate()
 
 
-func predict(input_array):
+func predict(input_array) -> Array:
 	var output = Matrix.fromArray(input_array)
 	for i in range(weights.size()):
 #		print(weights[i], ":" , output)
@@ -170,7 +170,8 @@ func mutation_function(val, params={}):
 	var mutation_rate = params.mutation_rate if params.mutation_rate != null else 0.05
 	randomize()
 	if(randf() < mutation_rate):
-		return Utils.map(rand_range(0, 1), 0, 1, -1, 1)
+#		return Utils.map(rand_range(0, 1), 0, 1, -1, 1)
+		return val + Utils.random_gaussian(0, 0.1)
 	else:
 		return val
 
