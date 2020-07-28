@@ -131,7 +131,7 @@ func randomize_matrix(min_range = -1, max_range = 1):
 
 func intialize():
 	matrix = []
-	for x in range(rows):
+	for _x in range(rows):
 			var col = []
 			col.resize(cols)
 			matrix.append(col)
@@ -147,10 +147,10 @@ func _to_string() -> String:
 	return m + ']'
 
 
-func _init(rows, cols):
+func _init(init_rows, init_cols):
 	rnd = rand_range(0, 1)
-	self.rows = rows
-	self.cols = cols
+	rows = init_rows
+	cols = init_cols
 	intialize()
 	return self
 
