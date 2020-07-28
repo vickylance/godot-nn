@@ -5,6 +5,7 @@ class_name Bird
 
 signal state_changed
 
+export var brain_train := false
 export var flap_power := 150
 export var forward_speed := 50
 
@@ -16,6 +17,9 @@ enum States {
 }
 var state
 var prev_state
+var brain: NeuralNetwork
+var fitness
+var score
 
 func _ready() -> void:
 	add_to_group(str(Game.Groups.BIRD))
@@ -23,6 +27,14 @@ func _ready() -> void:
 	var err := connect("body_entered", self, "_on_body_entered")
 	if err != OK:
 		print_debug("Error while connecting: ", err)
+	
+	if brain_train:
+		brain = NeuralNetwork.new(2,
+			[
+				Layer.new(3, Activation.Activations.LEAKY_RELU),
+				Layer.new(3, Activation.Activations.LEAKY_RELU)
+			],
+			Layer.new(1, Activation.Activations.SIGMOID))
 	pass
 
 
@@ -133,17 +145,20 @@ class FlappingState:
 		# if the bird hits ceiling
 		if bird.position.y < 0:
 			bird.set_state(bird.States.HIT)
+		
+		if bird.brain_train:
+			think()
 		pass
 	
 	
 	func input(event: InputEvent) -> void:
-		if event.is_action_pressed("flap"):
+		if event.is_action_pressed("flap") and !bird.brain_train:
 			flap()
 		pass
 	
 	
 	func unhandled_input(event: InputEvent) -> void:
-		if !(event is InputEventMouseButton) or !event.is_pressed() or event.is_echo():
+		if !(event is InputEventMouseButton) or !event.is_pressed() or event.is_echo() and !bird.brain_train:
 			return
 		
 		if event.button_index == BUTTON_LEFT:
@@ -162,6 +177,42 @@ class FlappingState:
 		elif other_body.is_in_group(str(Game.Groups.GROUND)):
 			print("Set state GROUND")
 			bird.set_state(bird.States.GROUNDED)
+		pass
+	
+	
+	func think():
+		# find the closest pipe
+		var closest_pipe = null
+		var closest_pipe_distance = 1000.0
+		var pipes = bird.get_tree().root.find_node("SpawnerPipe", true, false).get_node("Container").get_children()
+		if pipes.size() > 0:
+			for pipe in pipes:
+				var distance =  pipe.position.x - bird.position.x
+				if distance < closest_pipe_distance and distance > 0:
+					closest_pipe = pipe
+					closest_pipe_distance = distance
+		if not closest_pipe: return
+		
+		# find bird horizontal and vertical distance from pipe
+		var right := closest_pipe.find_node("Right", true, false) as Position2D
+		var bird_h
+		var bird_v
+		if right:
+			bird_h = (right.position.x - bird.position.x) / bird.get_viewport().size.x # normalize with screen width
+			bird_v = (right.position.y - bird.position.y) / bird.get_viewport().size.y # normalize with screen height
+		
+		# calculate fitness
+		bird.fitness = bird.position.x - closest_pipe_distance
+		
+		# predict
+		var inputs = [bird_h, bird_v]
+		var output := bird.brain.predict(inputs)
+		if output[0] > 0.5:
+			flap()
+		pass
+	
+	
+	func calculate_fitness() -> void:
 		pass
 	
 	
