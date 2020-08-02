@@ -13,14 +13,15 @@ export var amount_to_fill_view := 3
 var spawning_started := false
 
 func _process(_delta: float) -> void:
-	if not spawning_started:
-		var bird = Game.bird as Bird
-		print("bird connecting pipe", bird)
-		var err = bird.connect("state_changed", self, "_on_bird_state_changed", [], CONNECT_ONESHOT)
-		if err != OK:
-			print_debug("Error while connecting", err)
-		else:
-			spawning_started = true
+	if spawning_started: return
+	
+	var bird = Game.bird as Bird
+	print("bird connecting pipe", bird)
+	var err = bird.connect("state_changed", self, "_on_bird_state_changed", [], CONNECT_ONESHOT)
+	if err != OK:
+		print_debug("Error while connecting", err)
+	else:
+		spawning_started = true
 	pass
 
 
