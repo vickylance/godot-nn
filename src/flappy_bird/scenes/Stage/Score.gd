@@ -18,9 +18,11 @@ func _ready() -> void:
 	var err := Game.connect("current_score_changed", self, "_on_current_score_changed")
 	if err != OK:
 		print_debug("Error while connecting: ", err)
-	var bird = get_tree().root.find_node("Bird", true, false) as Bird
+	var bird := Game.bird as Bird
 	if bird:
-		bird.connect("state_changed", self, "_on_bird_state_changed")
+		var err2 = bird.connect("state_changed", self, "_on_bird_state_changed")
+		if err2 != OK:
+			print_debug("Error while connecting", err2)
 	update_score()
 	pass
 

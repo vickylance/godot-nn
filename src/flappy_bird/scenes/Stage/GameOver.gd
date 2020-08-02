@@ -5,9 +5,11 @@ onready var anim := $GameOverAnim as AnimationPlayer
 
 func _ready() -> void:
 	hide()
-	var bird = get_tree().root.find_node("Bird", true, false) as Bird
+	var bird := Game.bird as Bird
 	if bird:
-		bird.connect("state_changed", self, "_on_bird_state_changed")
+		var err = bird.connect("state_changed", self, "_on_bird_state_changed")
+		if err != OK:
+			print_debug("Error while connecting", err)
 	pass
 
 
