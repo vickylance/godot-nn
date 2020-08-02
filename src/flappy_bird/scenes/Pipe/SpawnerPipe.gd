@@ -10,11 +10,17 @@ export var offset_y := 55.0
 export var offset_x = 65.0
 export var amount_to_fill_view := 3
 
+var spawning_started := false
 
-func _ready() -> void:
-	var bird = get_tree().root.find_node("Bird", true, false) as Bird
-	if bird:
-		bird.connect("state_changed", self, "_on_bird_state_changed", [], CONNECT_ONESHOT)
+func _process(_delta: float) -> void:
+	if not spawning_started:
+		var bird = Game.bird as Bird
+		print("bird connecting pipe", bird)
+		var err = bird.connect("state_changed", self, "_on_bird_state_changed", [], CONNECT_ONESHOT)
+		if err != OK:
+			print_debug("Error while connecting", err)
+		else:
+			spawning_started = true
 	pass
 
 
@@ -56,7 +62,9 @@ func spawn_and_move() -> void:
 func spawn_pipe() -> void:
 	var new_pipe = pipe.instance()
 	new_pipe.position = position
-	new_pipe.connect("tree_exiting", self, "spawn_and_move")
+	var err = new_pipe.connect("tree_exiting", self, "spawn_and_move")
+	if err != OK:
+		print_debug("Error while connecting", err)
 	container.call_deferred("add_child", new_pipe)
 	pass
 
