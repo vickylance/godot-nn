@@ -2,9 +2,9 @@ extends Node
 class_name NeuralNetwork
 
 
-var inputNodes: Layer
-var hiddenNodes := []
-var outputNodes: Layer
+var input_nodes: Layer
+var hidden_nodes := []
+var output_nodes: Layer
 var weights := []
 var biases := []
 var activation_functions = []
@@ -12,17 +12,17 @@ var learning_rate = 0.0
 var Matrix = preload("res://Matrix.gd")
 
 
-func _init(inputNodes: int, hiddenNodes: Array, outputNodes: Layer) -> void:
-	self.inputNodes = Layer.new(inputNodes, 'Input')
-	self.hiddenNodes = hiddenNodes
-	self.outputNodes = outputNodes
+func _init(init_input_nodes: int, init_hidden_nodes: Array, init_output_nodes: Layer) -> void:
+	self.input_nodes = Layer.new(init_input_nodes, 'Input')
+	self.hidden_nodes = init_hidden_nodes
+	self.output_nodes = init_output_nodes
 	weights = []
 	biases = []
 	activation_functions = []
 	var nodes = []
-	nodes.append(self.inputNodes)
-	nodes = nodes + hiddenNodes.duplicate(true)
-	nodes.append(outputNodes)
+	nodes.append(self.input_nodes)
+	nodes = nodes + hidden_nodes.duplicate(true)
+	nodes.append(output_nodes)
 	
 	for i in range(nodes.size() - 1):
 		var weight = Matrix.new(nodes[i + 1].nodes, nodes[i].nodes)
@@ -33,8 +33,8 @@ func _init(inputNodes: int, hiddenNodes: Array, outputNodes: Layer) -> void:
 		biases.append(bias)
 	
 	# only hidden and output layers can have activation functions
-	var activation_layers = hiddenNodes.duplicate(true)
-	activation_layers.append(outputNodes)
+	var activation_layers = hidden_nodes.duplicate(true)
+	activation_layers.append(output_nodes)
 	for i in range(activation_layers.size()):
 		activation_functions.append(activation_layers[i].activation_fn)
 	
@@ -44,9 +44,7 @@ func _init(inputNodes: int, hiddenNodes: Array, outputNodes: Layer) -> void:
 func predict(input_array) -> Array:
 	var output = Matrix.fromArray(input_array)
 	for i in range(weights.size()):
-#		print(weights[i], ":" , output)
 		output = Matrix.dotProduct(weights[i], output)
-#		print(output)
 		output.add(biases[i])
 		output.map(activation_functions[i].forward)
 	
@@ -90,17 +88,12 @@ func train(inputs_array, targets_array):
 			hidden.add(biases[i])
 			hidden.map(activation_functions[i].forward)
 			forward_weights.append(hidden)
-#	print("Inputs: ", inputs)
-#	print("Weights: ", weights)
-#	print("Biases: ", biases)
 	# Calculate the output error
 	var errors = []
 	for i in weights.size():
 		errors.append(Matrix.new(1,1).randomize_matrix())
-#	print("Errors Before: ", errors, targets)
 	errors[errors.size() - 1] = targets.subtract(
 			forward_weights[forward_weights.size() - 1]);
-#	print("Errors After: ", errors, targets)
 	var gradients = [];
 	# backward prop
 	for i in range(weights.size() - 1, -1, -1):
@@ -148,7 +141,7 @@ func setActivationFunction(activation_functions: Array) -> void:
 
 func clone():
 	var NeuralNetwork = load("res://NeuralNetwork.gd")
-	var clone = NeuralNetwork.new(inputNodes.nodes, hiddenNodes, outputNodes);
+	var clone = NeuralNetwork.new(input_nodes.nodes, hidden_nodes, output_nodes);
 	for i in range(weights.size()):
 		clone.weights[i] = Matrix.clone(weights[i])
 	for i in range(biases.size()):
