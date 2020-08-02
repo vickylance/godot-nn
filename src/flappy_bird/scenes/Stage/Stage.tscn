@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=2]
+[gd_scene load_steps=41 format=2]
 
 [ext_resource path="res://src/flappy_bird/scenes/Ground/Background.tscn" type="PackedScene" id=1]
 [ext_resource path="res://src/flappy_bird/scenes/Bird/Bird.tscn" type="PackedScene" id=2]
@@ -25,8 +25,10 @@
 [ext_resource path="res://assets/flappy_bird/sprites/rect_black.png" type="Texture" id=23]
 [ext_resource path="res://assets/flappy_bird/sprites/button_resume.png" type="Texture" id=24]
 [ext_resource path="res://assets/flappy_bird/sprites/button_menu.png" type="Texture" id=25]
+[ext_resource path="res://assets/flappy_bird/sprites/label_get_ready.png" type="Texture" id=26]
+[ext_resource path="res://src/flappy_bird/scenes/Stage/GA.gd" type="Script" id=27]
 
-[sub_resource type="GDScript" id=4]
+[sub_resource type="GDScript" id=1]
 resource_name = "BestScoreContainer"
 script/source = "extends HBoxContainer
 
@@ -82,7 +84,7 @@ func get_digits(score: int) -> Array:
 	pass
 "
 
-[sub_resource type="GDScript" id=5]
+[sub_resource type="GDScript" id=2]
 resource_name = "NewBest"
 script/source = "extends TextureRect
 
@@ -94,7 +96,7 @@ func _ready() -> void:
 	pass
 "
 
-[sub_resource type="GDScript" id=6]
+[sub_resource type="GDScript" id=3]
 resource_name = "Medal"
 script/source = "extends TextureRect
 
@@ -132,7 +134,7 @@ func show_medal() -> void:
 	pass
 "
 
-[sub_resource type="SpriteFrames" id=7]
+[sub_resource type="SpriteFrames" id=4]
 animations = [ {
 "frames": [ ExtResource( 20 ), ExtResource( 19 ), ExtResource( 21 ), ExtResource( 19 ), ExtResource( 20 ), null ],
 "loop": true,
@@ -140,7 +142,7 @@ animations = [ {
 "speed": 10.0
 } ]
 
-[sub_resource type="GDScript" id=8]
+[sub_resource type="GDScript" id=5]
 resource_name = "SparkAnim"
 script/source = "extends AnimatedSprite
 
@@ -171,8 +173,7 @@ func _on_SparkAnim_animation_finished() -> void:
 	pass
 "
 
-[sub_resource type="GDScript" id=2]
-resource_name = "PlayButton"
+[sub_resource type="GDScript" id=6]
 script/source = "extends TextureButton
 
 func _ready() -> void:
@@ -193,8 +194,7 @@ func _on_PlayButton_pressed() -> void:
 	pass
 "
 
-[sub_resource type="GDScript" id=3]
-resource_name = "LeaderBoardButton"
+[sub_resource type="GDScript" id=7]
 script/source = "extends TextureButton
 
 func _ready() -> void:
@@ -209,8 +209,7 @@ func _on_ScoreContainer_counting_finished() -> void:
 	pass
 "
 
-[sub_resource type="Animation" id=1]
-resource_name = "show"
+[sub_resource type="Animation" id=8]
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:visible")
 tracks/0/interp = 1
@@ -287,7 +286,7 @@ func _on_bird_state_changed(bird: Bird) -> void:
 	pass
 "
 
-[sub_resource type="GDScript" id=11]
+[sub_resource type="GDScript" id=10]
 resource_name = "PauseOverlay"
 script/source = "extends Control
 
@@ -307,8 +306,7 @@ func _on_ResumeButton_pressed() -> void:
 	pass
 "
 
-[sub_resource type="GDScript" id=10]
-resource_name = "ResumeButton"
+[sub_resource type="GDScript" id=11]
 script/source = "extends TextureButton
 
 
@@ -340,9 +338,13 @@ onready var camera = get_parent() as Camera2D
 
 
 func _ready() -> void:
+	if get_tree().root.find_node(\"GA\", true, false).run_simulation: return
+	
 	var bird := get_tree().root.find_node(\"Bird\", true, false) as Bird
 	if bird:
-		bird.connect(\"state_changed\", self, \"_on_bird_state_changed\")
+		var err := bird.connect(\"state_changed\", self, \"_on_bird_state_changed\")
+		if err != OK:
+			print_debug(\"Error while connecting\", err)
 	pass
 
 
@@ -371,7 +373,7 @@ func _on_bird_state_changed(bird: Bird):
 	pass
 "
 
-[node name="Stage" type="Node2D"]
+[node name="MainStage" type="Node2D"]
 
 [node name="Background" parent="." instance=ExtResource( 1 )]
 
@@ -400,6 +402,17 @@ texture = ExtResource( 6 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="GetReady" type="TextureRect" parent="HUD/Start"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -46.0
+margin_top = -60.0
+margin_right = 46.0
+margin_bottom = 20.0
+texture = ExtResource( 26 )
 
 [node name="Score" type="HBoxContainer" parent="HUD"]
 anchor_right = 1.0
@@ -480,7 +493,7 @@ margin_right = -10.0
 margin_bottom = 45.8519
 custom_constants/separation = 1
 alignment = 2
-script = SubResource( 4 )
+script = SubResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -493,7 +506,7 @@ margin_top = 29.3487
 margin_right = -30.6511
 margin_bottom = 36.3487
 texture = ExtResource( 17 )
-script = SubResource( 5 )
+script = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -504,15 +517,15 @@ margin_top = 20.8591
 margin_right = 35.3872
 margin_bottom = 42.8591
 texture = ExtResource( 18 )
-script = SubResource( 6 )
+script = SubResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="SparkAnim" type="AnimatedSprite" parent="HUD/GameOverContainer/CenterContainer/VBoxContainer/VBoxContainer/ScoreBoardTexture/Medal"]
-frames = SubResource( 7 )
+frames = SubResource( 4 )
 animation = "spark"
-script = SubResource( 8 )
+script = SubResource( 5 )
 
 [node name="HBoxContainer" type="HBoxContainer" parent="HUD/GameOverContainer/CenterContainer/VBoxContainer"]
 margin_top = 113.0
@@ -526,7 +539,7 @@ mouse_default_cursor_shape = 2
 texture_normal = ExtResource( 11 )
 texture_pressed = ExtResource( 10 )
 texture_hover = ExtResource( 10 )
-script = SubResource( 2 )
+script = SubResource( 6 )
 
 [node name="Spacer" type="Label" parent="HUD/GameOverContainer/CenterContainer/VBoxContainer/HBoxContainer"]
 margin_left = 56.0
@@ -543,11 +556,11 @@ mouse_default_cursor_shape = 2
 texture_normal = ExtResource( 13 )
 texture_pressed = ExtResource( 8 )
 texture_hover = ExtResource( 8 )
-script = SubResource( 3 )
+script = SubResource( 7 )
 
 [node name="GameOverAnim" type="AnimationPlayer" parent="HUD/GameOverContainer"]
 playback_speed = 1.5
-anims/show = SubResource( 1 )
+anims/show = SubResource( 8 )
 
 [node name="PauseButton" type="TextureButton" parent="HUD"]
 margin_left = 10.0
@@ -565,7 +578,7 @@ __meta__ = {
 pause_mode = 2
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = SubResource( 11 )
+script = SubResource( 10 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -584,7 +597,7 @@ margin_right = 13.0
 margin_bottom = 14.0
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource( 24 )
-script = SubResource( 10 )
+script = SubResource( 11 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -602,8 +615,6 @@ mouse_default_cursor_shape = 2
 texture_normal = ExtResource( 25 )
 script = SubResource( 12 )
 
-[node name="Bird" parent="." instance=ExtResource( 2 )]
-
 [node name="Camera" type="Camera2D" parent="."]
 offset = Vector2( -25, 0 )
 anchor_mode = 0
@@ -616,14 +627,24 @@ script = SubResource( 13 )
 [node name="SpawnerGround" parent="." instance=ExtResource( 4 )]
 
 [node name="SpawnerPipe" parent="." instance=ExtResource( 5 )]
-[connection signal="counting_finished" from="HUD/GameOverContainer/CenterContainer/VBoxContainer/VBoxContainer/ScoreBoardTexture/ScoreContainer" to="HUD/GameOverContainer/CenterContainer/VBoxContainer/HBoxContainer/PlayButton" method="_on_ScoreContainer_counting_finished"]
+
+[node name="Birds" type="Node" parent="."]
+
+[node name="Bird" parent="Birds" instance=ExtResource( 2 )]
+brain_train = true
+
+[node name="GA" type="Node" parent="."]
+script = ExtResource( 27 )
+agent = ExtResource( 2 )
+container = NodePath("../Birds")
 [connection signal="counting_finished" from="HUD/GameOverContainer/CenterContainer/VBoxContainer/VBoxContainer/ScoreBoardTexture/ScoreContainer" to="HUD/GameOverContainer/CenterContainer/VBoxContainer/VBoxContainer/ScoreBoardTexture/Medal" method="_on_ScoreContainer_counting_finished"]
+[connection signal="counting_finished" from="HUD/GameOverContainer/CenterContainer/VBoxContainer/VBoxContainer/ScoreBoardTexture/ScoreContainer" to="HUD/GameOverContainer/CenterContainer/VBoxContainer/HBoxContainer/PlayButton" method="_on_ScoreContainer_counting_finished"]
 [connection signal="counting_finished" from="HUD/GameOverContainer/CenterContainer/VBoxContainer/VBoxContainer/ScoreBoardTexture/ScoreContainer" to="HUD/GameOverContainer/CenterContainer/VBoxContainer/HBoxContainer/LeaderboardButton" method="_on_ScoreContainer_counting_finished"]
 [connection signal="shown" from="HUD/GameOverContainer/CenterContainer/VBoxContainer/VBoxContainer/ScoreBoardTexture/Medal" to="HUD/GameOverContainer/CenterContainer/VBoxContainer/VBoxContainer/ScoreBoardTexture/Medal/SparkAnim" method="_on_Medal_shown"]
 [connection signal="animation_finished" from="HUD/GameOverContainer/CenterContainer/VBoxContainer/VBoxContainer/ScoreBoardTexture/Medal/SparkAnim" to="HUD/GameOverContainer/CenterContainer/VBoxContainer/VBoxContainer/ScoreBoardTexture/Medal/SparkAnim" method="_on_SparkAnim_animation_finished"]
 [connection signal="pressed" from="HUD/GameOverContainer/CenterContainer/VBoxContainer/HBoxContainer/PlayButton" to="HUD/GameOverContainer/CenterContainer/VBoxContainer/HBoxContainer/PlayButton" method="_on_PlayButton_pressed"]
-[connection signal="pressed" from="HUD/PauseButton" to="HUD/PauseOverlay" method="_on_PauseButton_pressed"]
 [connection signal="pressed" from="HUD/PauseButton" to="HUD/PauseButton" method="_on_PauseButton_pressed"]
+[connection signal="pressed" from="HUD/PauseButton" to="HUD/PauseOverlay" method="_on_PauseButton_pressed"]
 [connection signal="pressed" from="HUD/PauseOverlay/ResumeButton" to="HUD/PauseOverlay" method="_on_ResumeButton_pressed"]
 [connection signal="pressed" from="HUD/PauseOverlay/ResumeButton" to="HUD/PauseOverlay/ResumeButton" method="_on_ResumeButton_pressed"]
 [connection signal="pressed" from="HUD/PauseOverlay/MenuButton" to="HUD/PauseOverlay/MenuButton" method="_on_MenuButton_pressed"]
