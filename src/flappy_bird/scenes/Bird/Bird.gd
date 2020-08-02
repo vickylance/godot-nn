@@ -9,6 +9,7 @@ export var brain_train := false
 export var flap_power := 150
 export var forward_speed := 50
 
+
 enum States {
 	FLYING,
 	HIT,
@@ -27,7 +28,6 @@ func _ready() -> void:
 	var err := connect("body_entered", self, "_on_body_entered")
 	if err != OK:
 		print_debug("Error while connecting: ", err)
-	
 	if brain_train:
 		brain = NeuralNetwork.new(2,
 			[
@@ -152,13 +152,15 @@ class FlappingState:
 	
 	
 	func input(event: InputEvent) -> void:
-		if event.is_action_pressed("flap") and !bird.brain_train:
+		if bird.brain_train: return
+		if event.is_action_pressed("flap"):
 			flap()
 		pass
 	
 	
 	func unhandled_input(event: InputEvent) -> void:
-		if !(event is InputEventMouseButton) or !event.is_pressed() or event.is_echo() and !bird.brain_train:
+		if bird.brain_train: return
+		if !(event is InputEventMouseButton) or !event.is_pressed() or event.is_echo():
 			return
 		
 		if event.button_index == BUTTON_LEFT:
@@ -172,10 +174,8 @@ class FlappingState:
 	
 	func on_body_enter(other_body) -> void:
 		if other_body.is_in_group(str(Game.Groups.PIPES)):
-			print("Set state HIT")
 			bird.set_state(bird.States.HIT)
 		elif other_body.is_in_group(str(Game.Groups.GROUND)):
-			print("Set state GROUND")
 			bird.set_state(bird.States.GROUNDED)
 		pass
 	
@@ -221,7 +221,7 @@ class FlappingState:
 		bird.angular_velocity = -3
 		bird.get_node("Anim").play("Flapping")
 		
-		AudioLibrary.find_node("sfx_wing").play()
+		AudioLibrary.play("sfx_wing")
 		pass
 	
 	pass
@@ -241,8 +241,8 @@ class HitState:
 			var other_body = bird.get_colliding_bodies()[0]
 			bird.add_collision_exception_with(other_body)
 		
-		AudioLibrary.find_node("sfx_hit").play()
-		AudioLibrary.find_node("sfx_die").play()
+		AudioLibrary.play("sfx_hit")
+		AudioLibrary.play("sfx_die")
 		pass
 	
 	
@@ -278,7 +278,7 @@ class GroundedState:
 		bird.sleeping = true
 		
 		if bird.prev_state != bird.States.HIT:
-			AudioLibrary.find_node("sfx_hit").play()
+			AudioLibrary.play("sfx_hit")
 		pass
 	
 	

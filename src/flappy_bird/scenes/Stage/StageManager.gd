@@ -17,7 +17,7 @@ func change_stage(stage_path: String) -> void:
 	# fade to black
 	get_node("Fill").visible = true
 	get_node("Anim").play("fade_in")
-	AudioLibrary.find_node("sfx_swooshing").play()
+	AudioLibrary.play("sfx_swooshing")
 	yield(get_node("Anim"), "animation_finished")
 	
 	# change scene

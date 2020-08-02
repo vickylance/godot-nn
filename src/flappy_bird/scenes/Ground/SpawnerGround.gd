@@ -19,7 +19,9 @@ func spawn_and_move():
 func spawn_ground():
 	var new_ground = ground.instance()
 	new_ground.position = position
-	new_ground.connect("tree_exiting", self, "spawn_and_move")
+	var err = new_ground.connect("tree_exiting", self, "spawn_and_move")
+	if err != OK:
+		print_debug("Error while connecting", err)
 	container.call_deferred("add_child", new_ground)
 	pass
 

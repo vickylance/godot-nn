@@ -11,5 +11,5 @@ func _ready() -> void:
 func _on_body_enter(other_body) -> void:
 	if other_body.is_in_group(str(Game.Groups.BIRD)):
 		Game.current_score += 1
-		AudioLibrary.find_node("sfx_point").play()
+		AudioLibrary.play("sfx_point")
 	pass
