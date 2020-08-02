@@ -3,6 +3,8 @@
 extends TextureButton
 
 func _ready() -> void:
+	var scene_name = get_tree().get_current_scene().get_name()
+	print("Scenename: ", scene_name)
 	var err := connect("pressed", self, "_on_pressed")
 	if err != OK:
 		print_debug("Error while connecting: ", err)
@@ -11,9 +13,8 @@ func _ready() -> void:
 
 
 func _on_pressed() -> void:
-	var bird := get_tree().root.find_node("Bird", true, false)
-	if bird:
-		bird.set_state(bird.States.FLAPPING)
-	
+	for bird in Game.birds:
+		if bird:
+			bird.set_state(bird.States.FLAPPING)
 	hide()
 	pass
