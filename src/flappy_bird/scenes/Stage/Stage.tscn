@@ -634,6 +634,7 @@ script = SubResource( 13 )
 
 [node name="GA" type="Node" parent="."]
 script = ExtResource( 27 )
+run_simulation = false
 agent = ExtResource( 2 )
 container = NodePath("../Birds")
 [connection signal="counting_finished" from="HUD/GameOverContainer/CenterContainer/VBoxContainer/VBoxContainer/ScoreBoardTexture/ScoreContainer" to="HUD/GameOverContainer/CenterContainer/VBoxContainer/VBoxContainer/ScoreBoardTexture/Medal" method="_on_ScoreContainer_counting_finished"]
