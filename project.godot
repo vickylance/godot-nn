@@ -20,6 +20,11 @@ _global_script_classes=[ {
 "path": "res://src/flappy_bird/scenes/Bird/Bird.gd"
 }, {
 "base": "Node",
+"class": "GeneticAlgorithm",
+"language": "GDScript",
+"path": "res://src/flappy_bird/scenes/Stage/GA.gd"
+}, {
+"base": "Node",
 "class": "Layer",
 "language": "GDScript",
 "path": "res://Layer.gd"
@@ -32,6 +37,7 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "Activation": "",
 "Bird": "",
+"GeneticAlgorithm": "",
 "Layer": "",
 "NeuralNetwork": ""
 }

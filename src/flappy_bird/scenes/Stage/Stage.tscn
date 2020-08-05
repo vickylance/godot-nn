@@ -379,7 +379,7 @@ func _on_bird_state_changed(bird: Bird):
 
 [node name="HUD" type="CanvasLayer" parent="."]
 
-[node name="Start" type="TextureButton" parent="HUD"]
+[node name="StartButton" type="TextureButton" parent="HUD"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_default_cursor_shape = 2
@@ -389,7 +389,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TapTap" type="TextureRect" parent="HUD/Start"]
+[node name="TapTap" type="TextureRect" parent="HUD/StartButton"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -403,7 +403,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="GetReady" type="TextureRect" parent="HUD/Start"]
+[node name="GetReady" type="TextureRect" parent="HUD/StartButton"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -631,7 +631,6 @@ script = SubResource( 13 )
 [node name="Birds" type="Node" parent="."]
 
 [node name="Bird" parent="Birds" instance=ExtResource( 2 )]
-brain_train = true
 
 [node name="GA" type="Node" parent="."]
 script = ExtResource( 27 )

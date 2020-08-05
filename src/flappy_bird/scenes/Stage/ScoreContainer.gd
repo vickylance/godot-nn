@@ -18,7 +18,6 @@ const sprite_numbers = [
 
 func _ready() -> void:
 	var anim = get_tree().root.find_node("GameOverAnim", true, false) as AnimationPlayer
-	print("yolo", anim)
 	yield(anim, "animation_finished")
 	count_to_score()
 	pass

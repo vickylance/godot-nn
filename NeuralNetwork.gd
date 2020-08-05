@@ -131,12 +131,12 @@ func train(inputs_array, targets_array):
 			biases[i].add(gradient)
 
 
-func setLearningRate(learning_rate = 0.01) -> void:
-	self.learning_rate = learning_rate
+func setLearningRate(new_learning_rate = 0.01) -> void:
+	self.learning_rate = new_learning_rate
 
 
-func setActivationFunction(activation_functions: Array) -> void:
-	self.activation_functions = activation_functions
+func setActivationFunction(new_activation_functions: Array) -> void:
+	self.activation_functions = new_activation_functions
 
 
 func clone():
@@ -151,7 +151,7 @@ func clone():
 	return clone
 
 
-func mutate(mutation_rate):
+func mutate(mutation_rate = 0.1):
 	var mutation_fn = funcref(self, "mutation_function")
 	for weight in weights:
 		weight.map(mutation_fn, {mutation_rate = mutation_rate})
@@ -167,7 +167,3 @@ func mutation_function(val, params={}):
 		return val + Utils.random_gaussian(0, 0.1)
 	else:
 		return val
-
-
-
-

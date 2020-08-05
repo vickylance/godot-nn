@@ -31,7 +31,7 @@ func _process(_delta: float) -> void:
 			ground_width)
 	
 	if prev_pos != start_pos:
-		print("Pos: ", camera.get_total_pos().x, " : ", start_pos, " : ", container.get_child_count())
+#		print("Pos: ", camera.get_total_pos().x, " : ", start_pos, " : ", container.get_child_count())
 		prev_pos = start_pos
 		position = Vector2(start_pos, position.y)
 		for _i in range(amount_to_fill_view):

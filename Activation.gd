@@ -53,7 +53,6 @@ func d_relu(y: float, _params={}):
 
 
 func leaky_relu(x: float, _params={}):
-#	print("Val: ", (0.01 * x if x < 0.0 else x))
 	return (0.01 * x if x < 0.0 else x)
 
 

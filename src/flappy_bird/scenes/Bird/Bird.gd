@@ -20,6 +20,7 @@ var state
 var prev_state
 var brain: NeuralNetwork
 var fitness
+var start_pos
 var score
 
 func _ready() -> void:
@@ -29,6 +30,7 @@ func _ready() -> void:
 	if err != OK:
 		print_debug("Error while connecting: ", err)
 	if brain_train:
+		modulate.a = 0.1
 		brain = NeuralNetwork.new(2,
 			[
 				Layer.new(3, Activation.Activations.LEAKY_RELU),
@@ -128,9 +130,10 @@ class FlappingState:
 	
 	func _init(bird_inst: Bird) -> void:
 		bird = bird_inst
-		
+		bird.start_pos = bird.position.x
 		bird.linear_velocity = Vector2(bird.forward_speed, bird.linear_velocity.y)
 		flap()
+#		print("Viewport height: ", bird.get_viewport().size.y, " , ", bird.position.y)
 		pass
 	
 	
@@ -142,8 +145,8 @@ class FlappingState:
 		if bird.linear_velocity.y > 0:
 			bird.angular_velocity = 2
 		
-		# if the bird hits ceiling
-		if bird.position.y < 0:
+		# if the bird hits ceiling or floor
+		if bird.position.y < 20 or bird.position.y > Utils.screen_height - 20:
 			bird.set_state(bird.States.HIT)
 		
 		if bird.brain_train:
@@ -153,6 +156,7 @@ class FlappingState:
 	
 	func input(event: InputEvent) -> void:
 		if bird.brain_train: return
+		
 		if event.is_action_pressed("flap"):
 			flap()
 		pass
@@ -160,6 +164,7 @@ class FlappingState:
 	
 	func unhandled_input(event: InputEvent) -> void:
 		if bird.brain_train: return
+		
 		if !(event is InputEventMouseButton) or !event.is_pressed() or event.is_echo():
 			return
 		
@@ -202,7 +207,7 @@ class FlappingState:
 			bird_v = (right.position.y - bird.position.y) / bird.get_viewport().size.y # normalize with screen height
 		
 		# calculate fitness
-		bird.fitness = bird.position.x - closest_pipe_distance
+		bird.fitness = bird.position.x - bird.start_pos
 		
 		# predict
 		var inputs = [bird_h, bird_v]
@@ -276,6 +281,7 @@ class GroundedState:
 		bird.linear_velocity = Vector2.ZERO
 		bird.angular_velocity = 0
 		bird.sleeping = true
+#		print("Viewport height: ", bird.get_viewport().get_visible_rect().size.y, " , ", bird.position.y)
 		
 		if bird.prev_state != bird.States.HIT:
 			AudioLibrary.play("sfx_hit")
@@ -293,4 +299,9 @@ class GroundedState:
 	func exit() -> void:
 		pass
 	
+	pass
+
+
+func _on_VisibilityNotifier2D_screen_exited() -> void:
+	set_state(States.GROUNDED)
 	pass

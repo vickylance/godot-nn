@@ -116,3 +116,6 @@ playback_speed = 3.0
 anims/Flapping = SubResource( 3 )
 anims/Flying = SubResource( 4 )
 anims/Idle = SubResource( 5 )
+
+[node name="Visible" type="VisibilityNotifier2D" parent="."]
+[connection signal="screen_exited" from="Visible" to="." method="_on_VisibilityNotifier2D_screen_exited"]

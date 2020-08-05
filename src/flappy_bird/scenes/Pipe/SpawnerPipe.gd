@@ -1,5 +1,4 @@
-# script: SpawnerPipe.gd
-
+tool
 extends Node2D
 
 var pipe = preload("res://src/flappy_bird/scenes/Pipe/Pipe.tscn")
@@ -24,10 +23,15 @@ var prev_pos = -1
 func _ready() -> void:
 	camera = get_tree().root.find_node("Camera", true, false) as Camera2D
 	if not camera: print_debug("Camera not found")
+	
 	start_button = get_tree().root.find_node("StartButton", true, false) as TextureButton
 	if not start_button: print_debug("Start button not found")
-	else:
-		start_button.connect("pressed", self, "start")
+	else: start_button.connect("pressed", self, "start")
+	
+	var ga = get_tree().root.find_node("GA", true, false) as GeneticAlgorithm
+	if ga:
+		print("Pipe found GA")
+		ga.connect("spawned_next_gen", self, "clear_all_pipes")
 	pass
 
 
@@ -43,7 +47,7 @@ func _process(_delta: float) -> void:
 	
 	if prev_pos != start_pos:
 		prev_pos = start_pos
-#		print("Pos: ", camera.get_total_pos().x, " : ", start_pos, " : ", container.get_child_count())
+		print("Pos: ", camera.get_total_pos().x, " : ", start_pos, " : ", container.get_child_count())
 		if first_time:
 			initial_offset = fmod(camera.get_total_pos().x, pipe_spacing)
 			first_time = false
@@ -90,27 +94,8 @@ func get_random_y_pos() -> float:
 	return rand_range(offset_y, Utils.screen_height - ground_height - offset_y)
 
 
-#func go_next_pos() -> void:
-#	randomize()
-#
-#	var spawn_pos = next_pos
-#	spawn_pos.x = float(Utils.screen_width + pipe_width / 2)
-#	spawn_pos.y = rand_range(offset_y, Utils.screen_height - ground_height - offset_y)
-#
-#	if camera:
-#		spawn_pos.x += camera.get_total_pos().x
-#
-#	position = spawn_pos
-#	next_pos = Vector2(position.x + offset_x + pipe_width / 2, 0)
-#	pass
+func clear_all_pipes(_pop = []) -> void:
+	for old_pipe in container.get_children():
+		old_pipe.queue_free()
+	pass
 
-
-#func go_next_pos() -> void:
-#	randomize()
-#
-#	var next_pos = position
-#	next_pos.x += float(pipe_width / 2 + offset_x + pipe_width / 2)
-#	next_pos.y = rand_range(offset_y, Utils.screen_height - ground_height - offset_y)
-#	position = next_pos
-#	pass
-#
